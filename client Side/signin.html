@@ -8,11 +8,11 @@
 </head>
 <body>
     <h2> SignIn to Submit Your Review</h2>
-    <form method="GET" action="/review">
-    Email: <input type="text" name="email" placeholder="abc@xyz.com" id="username" required><br>
+    <form method="GET" action="/api/Signin">
+    Email: <input type="text" name="email" placeholder="abc@xyz.com" id="email" required><br>
     Password: <input type="password" name='password' id="password" required><br>
-        <button type="submit">SignIn</button>
+        <button type="submit" onclick="verifyCredentials();">SignIn</button>
 </form>  
-<script type="text/javascript" src="app.js"></script>  
+<script type="text/javascript" src="client.js"></script>  
 </body>
 </html>

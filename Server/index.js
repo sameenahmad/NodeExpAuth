@@ -1,0 +1,14 @@
+const express = require("express");
+const bodyParser = require("body-parser");
+const app = express();
+const jwt = require("jsonwebtoken");
+var config = require("./config.js");
+var mongodb = require("mongodb");
+var bcrypt = require("bcryptjs");
+var model_user = require("./model_user");
+var model_reviews = require("./model_reviews");
+var router = require("./router.js");
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+const port = process.env.PORT || 4000;
+app.listen(port);
