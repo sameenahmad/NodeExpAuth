@@ -7,5 +7,5 @@ var reviewSchema=new mongoose.Schema({
     rating: {type: Number, min:0 , max:5}
     })
     var userReview=mongoose.model("userReview", reviewSchema)
-    model.exports=userReview;
+    module.exports=userReview;
     

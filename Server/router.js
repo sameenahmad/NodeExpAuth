@@ -26,32 +26,43 @@ app.post("/api/register", (req, res) => {
 
   let errors = [];
   if (password != password2) {
-    errors.push({ msg: "Passwords don't match" });
+    errors.push({ message: "Passwords don't match" });
   }
   if (password.length < 6) {
     errors.push({
       message: "Password length should be at least 6 characters "
     });
   }
-  var hashedPassword = bcrypt.hashSync(password, 8);
-  var myData = new User(name, email, hashedPassword);
+  //Hashing Password
+  bcrypt.genSalt(10, (err, salt) => {
+    bcrypt.hash(password, salt, (err, hash) => {
+      if (err) throw err;
+      password = hash;
+    });
+  });
+  var myData = new User({ name, email, password });
   myData.save();
 });
 
 //Log-in User
 app.get("/api/signin", (req, res) => {
-  let userEmail = req.body.email;
-  var Password = bcrypt.hashSync(req.body.password, 8);
-  let search = db.User.findOne(
-    { email: userEmail },
-    { hashedPassword: Password }
-  );
-  if (search != null) {
-    var token = jwt.sign({ userEmail }, config.secret, (err, token) => {
-      if (err) res.status(405).send("Authorization Failed");
-      else res.json({ token });
+  let email = req.body.email;
+  const password = req.body.password;
+  db.User.findOne({ email: email }).then(User => {
+    if (!User) {
+      return res.status(404).json({ email: "User not found" });
+    }
+    //comparing Hashed Passwords
+    bcrypt.compare(password, User.password).then(isMatch => {
+      if (isMatch) {
+        const payload = { id: User.id, name: User.name };
+        jwt.sign(payload, config.secret, (err, token) => {
+          res.json({ token });
+        });
+      }
+      else return res.status(400).json({message:'Password Incorrect'})
     });
-  }
+  });
 });
 
 //Verify Token
