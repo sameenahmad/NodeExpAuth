@@ -42,6 +42,7 @@ app.post("/api/register", (req, res) => {
   });
   var myData = new User({ name, email, password });
   myData.save();
+  res.redirect("/api/signin")
 });
 
 //Log-in User
@@ -63,6 +64,7 @@ app.get("/api/signin", (req, res) => {
       else return res.status(400).json({message:'Password Incorrect'})
     });
   });
+  res.redirect("review")
 });
 
 //Verify Token
