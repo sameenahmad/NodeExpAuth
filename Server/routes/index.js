@@ -3,20 +3,24 @@ const bcrypt = require("bcryptjs");
 
 const adminRouter = express.Router();
 
+const mongoose = require("mongoose");
+const User = mongoose.model("user");
+
 // Registers User to DataBase
 adminRouter.post("/register", (req, res) => {
   const { name, email, password, password2 } = req.body;
-  // User.findOne({ email: email }, (err, obj) => {
-  //if (err) return res.status(200).send(err);
-  //if (email!=undefined)
-  //return res.status(200).send("User already exist");
-  // });
-  //if (password != password2);
-  //res.send("Password Inocorrect");
+
+  User.findOne({ email: email }, (err, obj) => {
+    if (err) return res.status(200).send(err);
+    if (email != undefined) return res.status(200).send("User already exist");
+  });
+
+  if (password != password2);
+  res.send("Password Inocorrect");
   //Hashing Password
   bcrypt.genSalt(10, (err, salt) => {
     bcrypt.hash(password, salt, (err, hash) => {
-      if (err) throw err;
+      if (err) return res.status(500).json(err);
       password = hash;
     });
   });

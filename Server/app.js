@@ -10,6 +10,16 @@ const bodyParser = require("body-parser");
 console.debug("$> Modules successfully initialized ! :tada:");
 
 /**
+ * Database
+ */
+
+console.debug("$> Initializing Database! :tada:");
+
+const dbConnect = require("./db/database");
+
+console.debug("$> Database successfully initialized ! :tada:");
+
+/**
  * Routes
  */
 
@@ -19,16 +29,6 @@ var adminRouter = require("./routes");
 const htmlRouter = require("../clientSide/htmlRouter");
 
 console.debug("$> Routes successfully initialized ! :tada:");
-
-/**
- * Database
- */
-
-console.debug("$> Initializing Database! :tada:");
-
-const dbConnect = require("./db/database");
-
-console.debug("$> Database successfully initialized ! :tada:");
 
 /**
  * App Config
