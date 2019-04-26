@@ -1,36 +1,30 @@
 const express = require("express");
-const userModel = require("./userModel");
-const reviewModel = require("./reviewModel");
-const htmlRouter = require("../clientSide/htmlRouter.js");
-const dbConnect = require("./dbConnect");
-var bcrypt = require("bcryptjs");
-const app = express();
-const mongoose=require('mongoose');
+const bcrypt = require("bcryptjs");
+
 const adminRouter = express.Router();
-//Registers User to DataBase
+
+// Registers User to DataBase
 adminRouter.post("/register", (req, res) => {
-  const{name,email,password,password2}  = req.body;
- // User.findOne({ email: email }, (err, obj) => {
-    //if (err) return res.status(200).send(err);
-    //if (email!=undefined)
-    //return res.status(200).send("User already exist");
- // });
+  const { name, email, password, password2 } = req.body;
+  // User.findOne({ email: email }, (err, obj) => {
+  //if (err) return res.status(200).send(err);
+  //if (email!=undefined)
+  //return res.status(200).send("User already exist");
+  // });
   //if (password != password2);
   //res.send("Password Inocorrect");
   //Hashing Password
   bcrypt.genSalt(10, (err, salt) => {
     bcrypt.hash(password, salt, (err, hash) => {
-      if (err) throw(err);
+      if (err) throw err;
       password = hash;
     });
   });
-  var myData = new User({name, email, password});
-  myData.save((err,savedUser)=>
-  {
- if(err) return res.status(500).send();
- else res.status(200).send();
-
-  })
+  var myData = new User({ name, email, password });
+  myData.save((err, savedUser) => {
+    if (err) return res.status(500).send();
+    else res.status(200).send();
+  });
   // res.redirect("/signin");
 });
 
@@ -54,6 +48,13 @@ adminRouter.get("/signin", (req, res) => {
   // return res.redirect('/review')
 });
 
+adminRouter.post("/submitReview", (req, res) => {
+  const { movie, review, rating } = req.body;
+  if (rating > 5) res.json({ message: "Please rate between 0-5" });
+  var userInput = new userReview(movie, review, rating);
+  userInput.save();
+});
+
 //Verify Token
 function verifyToken(req, res, next) {
   //Get auth header value
@@ -66,13 +67,5 @@ function verifyToken(req, res, next) {
     next();
   }
 }
-
-adminRouter.post("/submitReview", (req, res) => {
-  const { movie, review, rating } = req.body;
-  if (rating > 5) res.json({ message: "Please rate between 0-5" });
-  var userInput = new userReview(movie, review, rating);
-  userInput.save();
-});
-app.use("/api", adminRouter);
 
 module.exports = adminRouter;
