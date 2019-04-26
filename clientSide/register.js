@@ -7,7 +7,7 @@ function registerUser() {
     fetch("http://localhost:4000/api/register", {
       method: "POST",
       headers: new Headers(),
-      body: JSON.stringify({ email: email, body: body, password: password })
+      body: JSON.stringify({ name: name, email: email, password: password })
     })
       .then(res => res.json())
       .then(data => console.log(data))

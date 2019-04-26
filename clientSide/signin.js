@@ -4,9 +4,9 @@ function verifyCredentials(event) {
   var email = document.getElementById("email").value;
   var password = document.getElementById("password").value;
   fetch("http://localhost:4000/api/signin", {
-    method: "GET",
+    method: "POST",
     headers: new Headers(),
-    body: JSON.stringify({ email: email, body: body })
+    body: JSON.stringify({ email: email, password: password })
   })
     .then(res => res.json())
     .then(data => console.log(data))
