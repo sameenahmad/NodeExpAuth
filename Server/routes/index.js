@@ -10,25 +10,35 @@ const User = mongoose.model("user");
 adminRouter.post("/register", (req, res) => {
   const { name, email, password, password2 } = req.body;
 
-  User.findOne({ email: email }, (err, obj) => {
-    if (err) return res.status(200).send(err);
-    if (email != undefined) return res.status(200).send("User already exist");
-  });
+  User.findOne({ email }, (err, obj) => {
+    console.log("TCL: obj", obj);
+    if (err) return res.status(200).json({ err });
 
-  if (password != password2);
-  res.send("Password Inocorrect");
-  //Hashing Password
-  bcrypt.genSalt(10, (err, salt) => {
-    bcrypt.hash(password, salt, (err, hash) => {
-      if (err) return res.status(500).json(err);
-      password = hash;
+    // Already a user with this email
+    if (obj) return res.status(200).json({ message: "User already exists" });
+    if (password != password2) {
+      return res.send("Password Inocorrect");
+    }
+
+    //Hashing Password
+    bcrypt.genSalt(10, (err, salt) => {
+      bcrypt.hash(password, salt, (err, hash) => {
+        if (err) return res.status(500).json({ err });
+        let hashedPassword = hash;
+
+        var myData = new User({
+          name,
+          email,
+          password: hashedPassword
+        });
+        myData.save((err, savedUser) => {
+          if (err) return res.status(500).json({ err });
+          else res.status(200).json({ success: true });
+        });
+      });
     });
   });
-  var myData = new User({ name, email, password });
-  myData.save((err, savedUser) => {
-    if (err) return res.status(500).send();
-    else res.status(200).send();
-  });
+
   // res.redirect("/signin");
 });
 

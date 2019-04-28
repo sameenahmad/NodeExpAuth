@@ -15,7 +15,7 @@ console.debug("$> Modules successfully initialized ! :tada:");
 
 console.debug("$> Initializing Database! :tada:");
 
-const dbConnect = require("./db/database");
+require("./db/database");
 
 console.debug("$> Database successfully initialized ! :tada:");
 
