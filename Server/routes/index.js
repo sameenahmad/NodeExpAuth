@@ -5,15 +5,14 @@ const adminRouter = express.Router();
 const config = require("../config");
 const mongoose = require("mongoose");
 const User = mongoose.model("user");
+const userReview=mongoose.model("review")
 const saltrounds = 10;
 
 // Registers User to DataBase
 adminRouter.post("/register", (req, res) => {
   const { name, email, password, password2 } = req.body;
-
   User.findOne({ email }, (err, obj) => {
     if (err) return res.status(200).json({ err });
-
     // Already a user with this email
     if (obj) return res.status(200).json({ message: "User already exists" }); //exit the loop if user already exists. It is saving the existing user again
     if (password != password2) {
@@ -22,7 +21,6 @@ adminRouter.post("/register", (req, res) => {
     //Hashing Password
     bcrypt.hash(password, saltrounds, (err, hash) => {
       const hashedPassword = hash;
-
       var myData = new User({
         name,
         email,
@@ -38,8 +36,6 @@ adminRouter.post("/register", (req, res) => {
     });
   });
 });
-
-// res.redirect("/signin");
 //Log-in User
 adminRouter.post("/signin", (req, res) => {
   User.findOne({ email: req.body.email }, (err, obj) => {
@@ -63,27 +59,34 @@ adminRouter.post("/signin", (req, res) => {
       });
   });
 });
-
 // return res.redirect('/review')
-
-adminRouter.post("/submitReview", (req, res) => {
+adminRouter.post("/posts", verifyToken, (req, res) => {
   const { movie, review, rating } = req.body;
-  if (rating > 5) res.json({ message: "Please rate between 0-5" });
-  var userInput = new userReview(movie, review, rating);
-  userInput.save();
+  console.log(movie, review, rating);
+  var userInput = new userReview (
+    { movie,
+    review,
+    rating
+   });
+  userInput.save((err, savedData)=>{
+    if (err) return res.status(500).json({ err });
+        else {
+          res.status(200).json({ message: "Successfully Submitted" });
+          console.log(savedData);
+        }
+  });
 });
 
 //Verify Token
 function verifyToken(req, res, next) {
-  //Get auth header value
-  const bearerHeader = req.header["authorization"];
-  //check if bearer is undefined
+  const bearerHeader = req.headers["authorization"];
   if (typeof bearerHeader !== "undefined") {
     const bearer = bearerHeader.split(" ");
     const bearerToken = bearer[1];
-    req.token = bearerToken;
+    req.token = bearerToken;   
     next();
   }
+  else res.status(403).json({message:"Forbidden"});
 }
 
 module.exports = adminRouter;
