@@ -46,6 +46,6 @@ app.use("/api", adminRouter);
 app.use("/", htmlRouter);
 
 // Let's roll!
-app.listen(port);
+app.listen(port, ()=> console.log("Server listening on port 8000"));
 
 console.debug("$> ExpressApp successfully initialized ! :tada:");

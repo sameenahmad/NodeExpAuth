@@ -11,34 +11,37 @@ const saltrounds = 10;
 // Registers User to DataBase
 adminRouter.post("/register", (req, res) => {
   const { name, email, password, password2 } = req.body;
-  if(name!==undefined && email !== undefined && password!==undefined && password2!==undefined)
-{
+  if (
+    name !== undefined &&
+    email !== undefined &&
+    password !== undefined &&
+    password2 !== undefined
+  ) {
     User.findOne({ email }, (err, obj) => {
-    if (err) return res.status(200).json({ err });
-    // Already a user with this email
-    if (obj) return res.status(200).json({ message: "User already exists" }); //exit the loop if user already exists. It is saving the existing user again
-    if (password != password2) {
-      return res.status(200).json({ message: "Password doesn't Match" });
-    }
-    //Hashing Password
-    bcrypt.hash(password, saltrounds, (err, hash) => {
-      const hashedPassword = hash;
-      var myData = new User({
-        name,
-        email,
-        password: hashedPassword
-      });
-      myData.save((err, savedUser) => {
-        if (err) return res.status(500).json({ err });
-        else {
-          res.status(200).json({ success: true });
-          console.log(myData);
-        }
+      if (err) return res.status(200).json({ err });
+      // Already a user with this email
+      if (obj) return res.status(200).json({ message: "User already exists" }); //exit the loop if user already exists. It is saving the existing user again
+      if (password != password2) {
+        return res.status(200).json({ message: "Password doesn't Match" });
+      }
+      //Hashing Password
+      bcrypt.hash(password, saltrounds, (err, hash) => {
+        const hashedPassword = hash;
+        var myData = new User({
+          name,
+          email,
+          password: hashedPassword
+        });
+        myData.save((err, savedUser) => {
+          if (err) return res.status(500).json({ err });
+          else {
+            res.status(200).json({ success: true });
+            console.log(myData);
+          }
+        });
       });
     });
-  });
-}
-else res.status(400).json({message:"Please Fill all the entries"})
+  } else res.status(400).json({ message: "Please Fill all the entries" });
 });
 //Log-in User
 adminRouter.post("/signin", (req, res) => {
